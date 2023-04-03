@@ -72,6 +72,7 @@ def train(model, train_loader, test_loader, pre_frame, lr=1e-3, num_epochs=100, 
 
 def evaluate(model, test_loader, l, device='cpu'):
     testing_loss = 0
+    model = model.to(device)
     for i, data in enumerate(test_loader):
         inputs, outputs = data
         inputs.to(device)
