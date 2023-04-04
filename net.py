@@ -64,8 +64,8 @@ def train(model, train_loader, test_loader, pre_frame, lr=1e-3, num_epochs=100, 
         if (epoch+1) % 20 == 0:
             print(f"Epoch {epoch+1}/{num_epochs}: train loss: {epoch_loss:.4f}, test loss: {now_test_loss:.4f}")
 
-           # preview_frame = create_next_frame(model, pre_frame, unloader)
-           # preview_frame.save(f'outputs/{epoch+1} output.jpg')
+            preview_frame = create_next_frame(model, pre_frame, unloader, device)
+            preview_frame.save(f'outputs/{epoch+1} output.jpg')
 
     return train_loss, test_loss
 
@@ -75,8 +75,8 @@ def evaluate(model, test_loader, l, device='cpu'):
     model = model.to(device)
     for i, data in enumerate(test_loader):
         inputs, outputs = data
-        inputs.to(device)
-        outputs.to(device)
+        inputs = inputs.to(device)
+        outputs = outputs.to(device)
 
         with torch.no_grad():
             outputs_bar = model(inputs)
@@ -88,7 +88,9 @@ def evaluate(model, test_loader, l, device='cpu'):
     return epoch_loss
 
 
-def create_next_frame(model, pre_frame, transform):
+def create_next_frame(model, pre_frame, transform, device='cpu'):
+    model = model.to(device)
+    pre_frame = pre_frame.to(device)
     next_frame = model(pre_frame) * 255.0
-    image = transform(next_frame[0].cpu().clone())
+    image = transform(next_frame[0].clone())
     return image
